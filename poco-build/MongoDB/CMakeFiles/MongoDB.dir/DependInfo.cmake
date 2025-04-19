@@ -1,0 +1,51 @@
+
+# Consider dependencies only in project.
+set(CMAKE_DEPENDS_IN_PROJECT_ONLY OFF)
+
+# The set of languages for which implicit dependencies are needed:
+set(CMAKE_DEPENDS_LANGUAGES
+  )
+
+# The set of dependency files which are needed:
+set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/Array.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/Array.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/Array.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/Binary.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/Binary.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/Binary.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/Connection.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/Connection.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/Connection.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/Cursor.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/Cursor.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/Cursor.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/Database.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/Database.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/Database.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/DeleteRequest.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/DeleteRequest.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/DeleteRequest.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/Document.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/Document.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/Document.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/Element.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/Element.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/Element.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/GetMoreRequest.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/GetMoreRequest.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/GetMoreRequest.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/InsertRequest.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/InsertRequest.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/InsertRequest.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/JavaScriptCode.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/JavaScriptCode.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/JavaScriptCode.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/KillCursorsRequest.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/KillCursorsRequest.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/KillCursorsRequest.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/Message.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/Message.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/Message.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/MessageHeader.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/MessageHeader.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/MessageHeader.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/ObjectId.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/ObjectId.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/ObjectId.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/OpMsgCursor.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/OpMsgCursor.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/OpMsgCursor.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/OpMsgMessage.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/OpMsgMessage.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/OpMsgMessage.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/QueryRequest.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/QueryRequest.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/QueryRequest.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/RegularExpression.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/RegularExpression.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/RegularExpression.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/ReplicaSet.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/ReplicaSet.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/ReplicaSet.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/RequestMessage.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/RequestMessage.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/RequestMessage.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/ResponseMessage.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/ResponseMessage.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/ResponseMessage.cpp.o.d"
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco/MongoDB/src/UpdateRequest.cpp" "MongoDB/CMakeFiles/MongoDB.dir/src/UpdateRequest.cpp.o" "gcc" "MongoDB/CMakeFiles/MongoDB.dir/src/UpdateRequest.cpp.o.d"
+  )
+
+# Pairs of files generated by the same build rule.
+set(CMAKE_MULTIPLE_OUTPUT_PAIRS
+  "/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/lib/libPocoMongoDB.dylib" "/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/lib/libPocoMongoDB.111.dylib"
+  )
+
+
+# Targets to which this target links which contain Fortran sources.
+set(CMAKE_Fortran_TARGET_LINKED_INFO_FILES
+  )
+
+# Targets to which this target links which contain Fortran sources.
+set(CMAKE_Fortran_TARGET_FORWARD_LINKED_INFO_FILES
+  )
+
+# Fortran module output directory.
+set(CMAKE_Fortran_TARGET_MODULE_DIR "")

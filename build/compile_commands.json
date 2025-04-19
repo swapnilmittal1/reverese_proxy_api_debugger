@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/Users/swapnilmittal/reverse_proxy_api_debugger/build",
+  "command": "/usr/bin/c++ -DPOCO_CMAKE -DPOCO_ENABLE_CPP11 -DPOCO_ENABLE_CPP14 -DPOCO_HAVE_IPv6 -DPOCO_NO_STAT64 -DPOCO_OS_FAMILY_UNIX -DSQLParser_EXPORTS -DUTF8PROC_STATIC -DXML_DTD -DXML_GE -isystem /Users/swapnilmittal/.local/poco/include -isystem /opt/homebrew/opt/libpq/include -isystem /opt/homebrew/opt/libpq/include/postgresql/server -isystem /opt/homebrew/Cellar/openssl@3/3.4.1/include -O3 -DNDEBUG -std=gnu++17 -arch arm64 -fPIE -o proxy/CMakeFiles/proxy.dir/src/main.cpp.o -c /Users/swapnilmittal/reverse_proxy_api_debugger/proxy/src/main.cpp",
+  "file": "/Users/swapnilmittal/reverse_proxy_api_debugger/proxy/src/main.cpp",
+  "output": "proxy/CMakeFiles/proxy.dir/src/main.cpp.o"
+}
+]

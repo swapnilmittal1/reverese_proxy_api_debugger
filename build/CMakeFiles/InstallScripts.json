@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/build/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/build/proxy/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

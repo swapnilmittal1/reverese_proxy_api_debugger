@@ -1,0 +1,28 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/Foundation/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/Encodings/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/XML/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/JSON/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/Util/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/Net/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/MongoDB/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/Redis/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/Prometheus/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/JWT/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/NetSSL_OpenSSL/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/Crypto/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/Data/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/Data/SQLite/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/Data/PostgreSQL/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/Data/ODBC/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/ActiveRecord/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/ActiveRecord/Compiler/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/Zip/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/PageCompiler/cmake_install.cmake",
+		"/Users/swapnilmittal/reverse_proxy_api_debugger/poco-build/PageCompiler/File2Page/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

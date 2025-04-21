@@ -1,0 +1,10 @@
+coordinator-public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5VYlBar5ya3daOVH82dq0xRl+DiXnJ4ORx8uQjl2Rx0ZtFNe3PQb+gUlOy10kxVKaduLT0HoLePzMPkb5beCBIofErEDHVy1IWENUC1VOtTxCEh9tbp4vmVAe7/SvaL83qj+envCv6TtpNaFNV3AzeBnmcEyxpOnmDn0H4WdYwGvXPn3kOAHZRrsRncyB+dmovIEyTxNqT+qHKPJD0hgvFmtt8QCispO0pUGUV7a6Y4WBUsCXAi+1q0ES6UnPzEEDvt0RWwPslh+Xg07nfML67H9KWNzfUBObbTAl61QBdIy38SCGptis7pJWBxyLrngKHhnCG5p/PBSQatPrnr/8wIDAQAB
+health-checks:
+  shared-secret: Hx2aVSp8am54CSdS
+service-discovery:
+  security:
+    trustStorePath: var/security/truststore.jks
+  services:
+    magritte-coordinator:
+      uris:
+      - https://reverseproyapidebugger.usw-3.palantirfoundry.com:443/magritte-coordinator/api

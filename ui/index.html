@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reverse‑Proxy Debugger</title>
+
+    <!-- Tailwind CSS (via CDN) – enables the utility classes used in App.tsx -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+
+    <!-- You can customise the default Tailwind palette here if you like
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#6366f1',          // indigo‑500
+              secondary: '#1e3a8a',        // indigo‑900
+            },
+          },
+        },
+      };
+    </script>
+    -->
+  </head>
+
+  <body class="bg-gray-100 text-gray-800">
+    <!-- React root – Vite injects the bundle here -->
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

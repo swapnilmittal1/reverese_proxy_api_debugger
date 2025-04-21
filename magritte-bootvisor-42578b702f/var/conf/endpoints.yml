@@ -1,0 +1,6 @@
+definitions:
+  service-endpoint:
+    desired-port: 7032
+    path: /magritte-bootvisor
+    port: 7032
+sls-status-endpoint: service-endpoint

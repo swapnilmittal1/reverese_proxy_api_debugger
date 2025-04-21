@@ -53,8 +53,8 @@ class ProxyHandler : public HTTPRequestHandler
                        const HTTPResponse&      upResp)
     {
         static const std::string dsn = Environment::get(
-            "PROXY_PG_DSN",
-            "host=127.0.0.1 port=5434 dbname=postgres "
+            "PG_DSN",
+            "host=127.0.0.1 port=5432 dbname=postgres "
             "user=postgres password=apidebugger");
 
         static Data::Session db("PostgreSQL", dsn);

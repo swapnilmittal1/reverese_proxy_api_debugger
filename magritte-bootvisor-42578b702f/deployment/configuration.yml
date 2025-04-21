@@ -1,0 +1,114 @@
+endpoints:
+  sls-status-endpoint: service-endpoint
+  definitions:
+    service-endpoint:
+      desired-port: 7032
+      path: "/magritte-bootvisor"
+
+generated_secrets:
+  health-check-shared-secret:
+    secret-type: random_string
+    length: 16
+  debug-shared-secret:
+    length: 24
+    secret-type: random_string
+
+replication:
+  desired: 1
+resources:
+  requests:
+    cpu: 0.1
+    memory: 4Gi
+volumes:
+  var-data:
+    durable-storage-configuration:
+      desired-size: 500G
+
+default_conf:
+  heap-size: 1280m
+  launcher-custom:
+    configType: java
+    configVersion: 1
+    jvmOpts:
+      - '-Xmx{{conf.heap-size}}'
+      - '-Xms{{conf.heap-size}}'
+
+  install:
+    port: "{{endpoints.definitions.service-endpoint.port}}"
+    context-path: "{{endpoints.definitions.service-endpoint.path}}"
+    product-name: "{{product_name}}"
+    product-version: "{{product_version}}"
+    is-skylab-managed: true
+    desired-agent-username: "{{service_name}}-agent"
+
+  runtime:
+    coordinator-public-key: "{{(discovered.shared-coordinator-public-key + [''])[0]}}"
+    coordinator-pre-shared-secret: "{{(discovered.shared-coordinator-secret + [''])[0]}}"
+
+    service-discovery:
+      security:
+        trustStorePath: "{{ssl.ca_path}}"
+      services:
+        magritte-coordinator:
+          uris: "{{discovered.magritte-coordinator}}"
+          enable-gcm-cipher-suites: true
+    health-checks:
+      shared-secret: "{{secret(name: 'health-check-shared-secret', part: 'secret_value')}}"
+    diagnostics:
+      debug-shared-secret: "{{secret(name: 'debug-shared-secret')}}"
+
+discovery:
+  version: 2
+  produces:
+    sls:
+      role: sls
+      skylab_node:
+        home-dir: "{{service_home}}"
+    sls-status:
+      role: sls-status
+      port: "{{conf.install.port}}"
+      path: "{{conf.install.context-path}}/status"
+      health-check-shared-secret: "{{secret(name: 'health-check-shared-secret')}}"
+    sls-debug:
+      role: sls-debug
+      scheme: https
+      port: '{{endpoints.definitions.service-endpoint.port}}'
+      path: '{{endpoints.definitions.service-endpoint.path}}'
+      debug-shared-secret: "{{secret(name: 'debug-shared-secret')}}"
+
+  consumes:
+    magritte-coordinator:
+      role: magritte-coordinator-api
+      select: uris
+    shared-coordinator-public-key:
+      role: magritte-coordinator-public-key
+      select: secret
+    shared-coordinator-secret:
+      role: magritte-coordinator-shared-secret
+      select: secret
+    foundry-metadata-api:
+      role: foundry-metadata-api
+      select: uris
+    compass-api:
+      role: compass-api
+      select: uris
+    foundry-catalog-api:
+      role: foundry-catalog-api
+      select: uris
+    foundry-data-proxy-api:
+      role: foundry-data-proxy-api
+      select: uris
+    build2-api:
+      role: build2-api
+      select: uris
+    stream-proxy-api:
+      role: stream-proxy-api
+      select: uris
+
+managed_files:
+  var/conf/install.yml: install
+  var/conf/runtime.yml:
+    content: runtime
+    live-reload: auto
+    type: yml
+  var/conf/launcher-custom.yml: launcher-custom

@@ -1,9 +1,11 @@
 services:
   db:
-    image: postgres:15
+    image: postgres:15-alpine
     environment:
       POSTGRES_PASSWORD: apidebugger
     ports: ["5434:5432"]
+    volumes:
+      - ./init-sql:/docker-entrypoint-initdb.d:ro
 
   pgadmin:
     image: dpage/pgadmin4
@@ -12,3 +14,32 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     ports: ["5050:80"]
     depends_on: [db]
+  worker:
+    build:
+      context: ../worker
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      PG_DSN:  "${PG_DSN}"
+      AIP_URL: "${AIP_URL}"
+      AIP_TOKEN: "${AIP_TOKEN}"
+  api:                     # ← NEW
+    build:
+      context: ../api
+      dockerfile: Dockerfile
+    env_file:
+      - .env               # re‑use PG_DSN, AIP_URL, AIP_TOKEN
+    ports:
+      - "5001:5000"
+    depends_on:
+      - db
+  proxy:
+    platform: linux/arm64
+    build:
+      context: ..                # <─ repo‑root is the context
+      dockerfile: proxy/Dockerfile
+    depends_on: [db]
+    ports: ["8080:8080"]
+    environment:
+      PG_DSN: host=db port=5432 dbname=postgres user=postgres password=apidebugger

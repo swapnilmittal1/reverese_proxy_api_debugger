@@ -1,0 +1,5 @@
+bind-to-localhost: true
+keystore:
+  key-alias: server
+  password: keystore
+  path: var/security/keystore.jks

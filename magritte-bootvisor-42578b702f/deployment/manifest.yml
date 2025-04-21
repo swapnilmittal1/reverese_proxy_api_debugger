@@ -1,0 +1,86 @@
+{
+  "manifest-version" : "1.0",
+  "product-type" : "service.v1",
+  "product-group" : "com.palantir.magritte",
+  "product-name" : "magritte-bootvisor-jre",
+  "product-version" : "1.500.0",
+  "extensions" : {
+    "require-individual-addressability" : true,
+    "diagnostics" : [ {
+      "type" : "diagnostic.hyperion.ete.v1",
+      "safe" : true,
+      "docs" : "Report a metric that will trigger a hyperion monitor to collect a different diagnostic."
+    }, {
+      "type" : "diagnostic.types.v1",
+      "safe" : true,
+      "docs" : "Lists all registered debug diagnostic types, for example `[\"diagnostic.types.v1\"]`."
+    }, {
+      "type" : "java.crash.log.v1",
+      "safe" : true,
+      "docs" : "This diagnostic prints the most recent jvm crash log (hs_err_pid) contents."
+    }, {
+      "type" : "java.flight.recorder.default.v1",
+      "safe" : true,
+      "docs" : "This diagnostic returns the most recently saved window of java flight recorder events (up to a maximum of 250MB). The resulting flight recording can be analyzed using [Zulu Mission Control](https://www.azul.com/products/zulu-mission-control/).",
+      "extension" : "jfr"
+    }, {
+      "type" : "java.flight.recorder.previousrun.v1",
+      "safe" : true,
+      "docs" : "This diagnostic returns the JFR events that were recorded during a previous run of the service. The resulting flight recording can be analyzed using [Zulu Mission Control](https://www.azul.com/products/zulu-mission-control/).",
+      "extension" : "jfr"
+    }, {
+      "type" : "java.flight.recorder.profile.1minute.v1",
+      "safe" : true,
+      "docs" : "Alias for 'java.flight.recorder.default.v1'",
+      "extension" : "jfr"
+    }, {
+      "type" : "java.heap.histogram.v1",
+      "safe" : true,
+      "docs" : "Take a heap histogram of the service process using `jmap -histo:live <PID>`. Note that this forces a full GC which impacts service performance."
+    }, {
+      "type" : "java.native.memory.summary.v1",
+      "safe" : true,
+      "docs" : "This diagnostic produces a java native memory tracking summary equivalent to `jcmd PID VM.native_memory`. Note that this does not produce any data unless the JVM was started with `-XX:NativeMemoryTracking=summary`."
+    }, {
+      "type" : "java.thread.dump.v1",
+      "safe" : true,
+      "docs" : "Take a thread dump of the service process using `jstack -l -e <PID>`. Note that this is an expensive operation which requires a safepoint and may impact service performance"
+    }, {
+      "type" : "metric.names.v1",
+      "safe" : true,
+      "docs" : "Lists the names of all registered metrics. This can be helpful to debug metric leaks where the number of reported metrics grows over time. Example output: `[{\"name\":\"server.response\",\"tags\":{\"endpoint\":\"getFoo\"}}]`"
+    }, {
+      "type" : "os.disk.space.v1",
+      "safe" : true,
+      "docs" : "This diagnostic produces basic disk statistics about the filesystem containing the working directory."
+    }, {
+      "type" : "os.system.clock.v1",
+      "safe" : true,
+      "docs" : "This diagnostic prints the current system timestamp as observed by the service. This could be useful for diagnosing clock skew."
+    }, {
+      "type" : "witchcraft.networking.status.v1",
+      "safe" : true,
+      "docs" : "This diagnostic attempts to establish a TCP connection with all discovered nodes, logging the status of each one."
+    } ],
+    "monitors" : {
+      "type" : "sls-config"
+    },
+    "upgrade-strategy" : "shutdown",
+    "public-proxy-endpoints" : [ ],
+    "product-dependencies" : [ {
+      "product-group" : "com.palantir.artifacts",
+      "product-name" : "artifacts",
+      "minimum-version" : "0.1351.0",
+      "recommended-version" : "0.1351.0",
+      "maximum-version" : "0.x.x",
+      "optional" : false
+    }, {
+      "product-group" : "com.palantir.magritte",
+      "product-name" : "magritte-coordinator",
+      "minimum-version" : "9.1720.0",
+      "maximum-version" : "9.x.x",
+      "optional" : false
+    } ],
+    "artifacts" : [ ]
+  }
+}

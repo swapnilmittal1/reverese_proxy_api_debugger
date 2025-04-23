@@ -28,8 +28,17 @@ const fmtDate = (s: number) => new Date(s * 1000).toLocaleString(undefined, { ho
 const headersToString = (h?: Record<string, string>) =>
   h ? Object.entries(h).map(([k, v]) => `${k}: ${v}`).join("\n") : "—";
 
+const pollTimeOptions = [
+  { value: 5000, label: "5 s" },
+  { value: 10000, label: "10 s" },
+  { value: 15000, label: "15 s" },
+  { value: 30000, label: "30 s" },
+  { value: 60000, label: "60 s" },
+];
+
 export default function App() {
   const [data, setData] = useState<Insight[]>([]);
+  const [pollTime, setPollTime] = useState(15000); // 15 seconds default
   const [since, setSince] = useState("3600");
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -56,9 +65,9 @@ export default function App() {
 
   useEffect(() => {
     fetchData();
-    const id = setInterval(fetchData, 15_000);
+    const id = setInterval(fetchData, pollTime);
     return () => clearInterval(id);
-  }, [since]);
+  }, [pollTime, since]);
 
   /* ─ columns ─ */
   const columns = useMemo<ColumnDef<Insight>[]>(
@@ -140,7 +149,12 @@ export default function App() {
           <div className="hidden md:flex items-center gap-6 text-xs">
             <Meta label="PROXY URL">localhost:8080</Meta>
             <Meta label="API BASE">api.open-meteo.com</Meta>
-            <Meta label="WORKER POLL">15 s</Meta>
+            <Meta label="WORKER POLL" 
+                  options={pollTimeOptions}
+                  value={pollTime}
+                  onChange={(value) => setPollTime(Number(value))}>
+              {pollTimeOptions.find(opt => opt.value === pollTime)?.label}
+            </Meta>
             <Meta label="AIP MODEL">GPT-4o turbo</Meta>
           </div>
         </div>
@@ -149,7 +163,12 @@ export default function App() {
         <div className="md:hidden flex flex-wrap gap-4 text-xs mb-8">
           <Meta label="PROXY URL">localhost:8080</Meta>
           <Meta label="API BASE">api.open-meteo.com</Meta>
-          <Meta label="WORKER POLL">15 s</Meta>
+          <Meta label="WORKER POLL"
+                options={pollTimeOptions}
+                value={pollTime}
+                onChange={(value) => setPollTime(Number(value))}>
+            {pollTimeOptions.find(opt => opt.value === pollTime)?.label}
+          </Meta>
           <Meta label="AIP MODEL">GPT-4o turbo</Meta>
         </div>
 

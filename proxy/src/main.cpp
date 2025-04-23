@@ -50,7 +50,9 @@ static Context::Ptr makeTLSctx()
 class ProxyHandler : public HTTPRequestHandler
 {
     void logToPostgres(const HTTPServerRequest& in,
-                       const HTTPResponse&      upResp)
+                       const HTTPResponse&      upResp,
+                       const std::string&      reqBody,
+                       const std::string&      resBody)
     {
         static const std::string dsn = Environment::get(
             "PG_DSN",
@@ -64,13 +66,17 @@ class ProxyHandler : public HTTPRequestHandler
         std::string  path   = in.getURI();
         int          status = static_cast<int>(upResp.getStatus());
 
+        // Combine request and response data
+        std::string body = "REQUEST:\n" + reqBody + "\n\nRESPONSE:\n" + resBody;
+
         Data::Statement st(db);
-        st  << "INSERT INTO proxy_log(\"timestamp\",method,path,status) "
-               "VALUES ($1,$2,$3,$4)",
+        st  << "INSERT INTO proxy_log(\"timestamp\",method,path,status,body) "
+               "VALUES ($1,$2,$3,$4,$5)",
                use(ts)      ,   // $1
                use(method)  ,   // $2
                use(path)    ,   // $3
-               use(status);     // $4
+               use(status)  ,   // $4
+               use(body);       // $5
         st.execute();
         db.commit();   // ← important!
 
@@ -84,23 +90,53 @@ class ProxyHandler : public HTTPRequestHandler
         static Context::Ptr tlsCtx = makeTLSctx();
         HTTPSClientSession upstream(UPSTREAM_HOST, UPSTREAM_PORT, tlsCtx);
 
+        // Capture request body
+        std::string reqBody;
+        if (in.getContentLength64() > 0) {
+            std::ostringstream reqBuf;
+            StreamCopier::copyStream(in.stream(), reqBuf);
+            reqBody = reqBuf.str();
+        }
+
+        // Add request headers to body
+        std::ostringstream reqHeaders;
+        reqHeaders << "Headers:\n";
+        for (const auto& header : in) {
+            reqHeaders << header.first << ": " << header.second << "\n";
+        }
+        reqBody = reqHeaders.str() + "\nBody:\n" + reqBody;
+
         HTTPRequest upReq(in.getMethod(), in.getURI(), HTTPMessage::HTTP_1_1);
         upReq.setHost(UPSTREAM_HOST);
-        upstream.sendRequest(upReq);
+        if (!reqBody.empty()) {
+            upReq.setContentLength64(reqBody.size());
+            upstream.sendRequest(upReq) << reqBody;
+        } else {
+            upstream.sendRequest(upReq);
+        }
 
         HTTPResponse  upResp;
         std::istream& rs = upstream.receiveResponse(upResp);
 
-        std::ostringstream buf;
-        StreamCopier::copyStream(rs, buf);
+        // Capture response headers
+        std::ostringstream resHeaders;
+        resHeaders << "Headers:\n";
+        for (const auto& header : upResp) {
+            resHeaders << header.first << ": " << header.second << "\n";
+        }
+
+        // Capture response body
+        std::ostringstream resBuf;
+        StreamCopier::copyStream(rs, resBuf);
+        std::string resBody = resHeaders.str() + "\nBody:\n" + resBuf.str();
 
         out.setStatus(upResp.getStatus());
         out.setReason(upResp.getReason());
         out.setContentType(upResp.getContentType());
-        out.setContentLength64(buf.str().size());
-        out.send() << buf.str();
+        out.setContentLength64(resBuf.str().size());
+        out.send() << resBuf.str();
 
-        logToPostgres(in, upResp);
+        logToPostgres(in, upResp, reqBody, resBody);
     }
 
 public:
@@ -115,13 +151,13 @@ public:
 
             out.setStatusAndReason(HTTPResponse::HTTP_BAD_GATEWAY);
             out.setContentType("application/json");
-            out.send() << R"({"error":")" << ex.displayText() << R"("})";
+            std::string errBody = R"({"error":")" + ex.displayText() + R"("})";
+            out.send() << errBody;
 
             /* ❶ still write a DB row so the worker can see the failure */
             HTTPResponse synthetic;
             synthetic.setStatus(HTTPResponse::HTTP_BAD_GATEWAY);   // 502
-            logToPostgres(in, synthetic);
-
+            logToPostgres(in, synthetic, "", "");
         }
     }
 };

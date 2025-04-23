@@ -6,6 +6,7 @@ so the React dashboard (or curl) can fetch AI root-cause analyses.
 import os
 import json
 import datetime as dt
+import traceback
 from decimal import Decimal
 from uuid import UUID
 from urllib.parse import unquote_plus
@@ -60,39 +61,66 @@ def healthz():
 
 @app.get("/insights")
 def insights():
-    # ── query params ────────────────────────────────────────────────────────
-    raw = request.args.get("since", "86400")  # default: 24 h
-    raw = unquote_plus(raw)                   # turn %20 → ' '
-    since = f"{raw} seconds" if raw.isdigit() else raw
-
     try:
-        limit = int(request.args.get("limit", "100"))
-    except ValueError:
-        abort(400, "'limit' must be an integer")
+        # ── query params ────────────────────────────────────────────────────────
+        raw = request.args.get("since", "86400")  # default: 24 h
+        raw = unquote_plus(raw)                   # turn %20 → ' '
+        since = f"{raw} seconds" if raw.isdigit() else raw
 
-    sql = """
-      SELECT i.id,
-             i.ts/1e6                  AS ts,
-             to_timestamp(i.ts/1e6)    AS ts_utc,
-             i.method, i.path, i.status,
-             i.root_cause, i.suggestion, i.confidence,
-             p.body as req_body,
-             NULL as req_headers,
-             NULL as res_body,
-             NULL as res_headers
-        FROM log_insight i
-        LEFT JOIN proxy_log p ON i.id = p.id
-       WHERE i.ts > extract(epoch from (now() - interval %s)) * 1e6
-       ORDER BY i.ts DESC
-       LIMIT %s
-    """
+        try:
+            limit = int(request.args.get("limit", "100"))
+        except ValueError:
+            abort(400, "'limit' must be an integer")
 
-    # ── run query ───────────────────────────────────────────────────────────
-    with pg_conn() as conn, conn.cursor() as cur:
-        cur.execute(sql, (since, limit))
-        rows = [dict(r) for r in cur.fetchall()]  # RealDictRow → plain dict
+        sql = """
+          SELECT i.id,
+                 i.ts/1e6                  AS ts,
+                 to_timestamp(i.ts/1e6)    AS ts_utc,
+                 i.method, i.path, i.status,
+                 i.root_cause, i.suggestion, i.confidence,
+                 p.body as req_body,
+                 NULL as req_headers,
+                 NULL as res_body,
+                 NULL as res_headers
+            FROM log_insight i
+            LEFT JOIN proxy_log p ON i.id = p.id
+           WHERE i.ts > extract(epoch from (now() - interval %s)) * 1e6
+           ORDER BY i.ts DESC
+           LIMIT %s
+        """
 
-    return json_response(rows)
+        # ── run query ───────────────────────────────────────────────────────────
+        with pg_conn() as conn, conn.cursor() as cur:
+            cur.execute(sql, (since, limit))
+            rows = [dict(r) for r in cur.fetchall()]  # RealDictRow → plain dict
+
+            # Process body fields after fetching
+            for row in rows:
+                if row['req_body']:
+                    try:
+                        if 'REQUEST:' in row['req_body']:
+                            req_part = row['req_body'].split('REQUEST:\n')[1].split('\n\nRESPONSE:')[0]
+                            res_part = row['req_body'].split('\n\nRESPONSE:\n')[1]
+                            
+                            # Extract headers and body from request
+                            if 'Headers:' in req_part:
+                                req_headers = req_part.split('Headers:\n')[1].split('\nBody:')[0]
+                                row['req_headers'] = {'headers': req_headers}
+                            
+                            # Extract headers and body from response
+                            if 'Headers:' in res_part:
+                                res_headers = res_part.split('Headers:\n')[1].split('\nBody:')[0]
+                                row['res_headers'] = {'headers': res_headers}
+                                row['res_body'] = res_part.split('\nBody:')[1] if '\nBody:' in res_part else ''
+                    except Exception as e:
+                        app.logger.error(f"Error processing body for row {row['id']}: {str(e)}")
+                        # Don't let body parsing errors break the whole response
+                        continue
+
+        return json_response(rows)
+    except Exception as e:
+        app.logger.error(f"Error in /insights: {str(e)}\n{traceback.format_exc()}")
+        return json_response({"error": str(e)}, status=500)
 
 
 # ── entry-point when run under `docker run …` ───────────────────────────────

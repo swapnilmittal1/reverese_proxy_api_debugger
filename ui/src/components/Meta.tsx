@@ -9,7 +9,7 @@ export default function Meta({
 }) {
   return (
     <div className="flex flex-col">
-      <span className="text-[10px] uppercase tracking-wider text-cyan-500">
+      <span className="text-[10px] uppercase tracking-wider text-fuchsia-400">
         {label}
       </span>
       <span className="text-sm font-medium text-gray-300">{children}</span>

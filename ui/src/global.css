@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { @apply bg-black text-gray-300 font-mono; }
+::-webkit-scrollbar { @apply h-2 w-2; }
+::-webkit-scrollbar-thumb { @apply bg-brand rounded; }

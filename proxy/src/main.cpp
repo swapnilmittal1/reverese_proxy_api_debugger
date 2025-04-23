@@ -116,6 +116,12 @@ public:
             out.setStatusAndReason(HTTPResponse::HTTP_BAD_GATEWAY);
             out.setContentType("application/json");
             out.send() << R"({"error":")" << ex.displayText() << R"("})";
+
+            /* ❶ still write a DB row so the worker can see the failure */
+            HTTPResponse synthetic;
+            synthetic.setStatus(HTTPResponse::HTTP_BAD_GATEWAY);   // 502
+            logToPostgres(in, synthetic);
+
         }
     }
 };

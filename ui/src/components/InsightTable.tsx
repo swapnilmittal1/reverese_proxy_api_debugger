@@ -1,66 +1,38 @@
-import {
-    useReactTable,
-    getCoreRowModel,
-    flexRender,
-    ColumnDef,
-  } from "@tanstack/react-table";
-  import { Insight } from "../types";
-  
-  export interface Props {
-    data: Insight[];
-    onSelect: (row: Insight) => void;
-  }
-  
-  export default function InsightTable({ data, onSelect }: Props) {
-    const columns: ColumnDef<Insight>[] = [
-      { header: "Time", accessorKey: "ts" },
-      { header: "Method", accessorKey: "method" },
-      { header: "Path", accessorKey: "path" },
-      { header: "Status", accessorKey: "status" },
-      {
-        header: "AI",
-        cell: ({ row }) =>
-          row.original.confidence >= 0.5 && (
-            <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">
-              ✔
-            </span>
-          ),
-      },
-    ];
-  
-    const table = useReactTable({
-      data,
-      columns,
-      getCoreRowModel: getCoreRowModel(),
-    });
-  
-    return (
-      <table className="w-full text-sm border
-                        [&_td]:border-gray-200 [&_th]:border-gray-300
-                        [&_td]:px-2 [&_td]:py-1">
-        <thead className="bg-gray-50">
-          {table.getHeaderGroups().map(hg => (
-            <tr key={hg.id}>
-              {hg.headers.map(h => (
-                <th key={h.id} className="text-left font-medium">
-                  {flexRender(h.column.columnDef.header, h.getContext())}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map(r => (
-            <tr key={r.id}
-                className="hover:bg-indigo-50 cursor-pointer"
-                onClick={() => onSelect(r.original)}>
-              {r.getVisibleCells().map(c => (
-                <td key={c.id}>{flexRender(c.column.columnDef.cell, c.getContext())}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  }
-  
+import { useEffect, useState } from 'react';
+import { getInsights }       from '../../../api/insights.ts';
+
+export default function InsightTable() {
+  const [rows, setRows]   = useState([]);
+  const [error, setError] = useState<string>();
+
+  useEffect(() => {
+    getInsights(6)
+      .then(setRows)
+      .catch(e => setError(e.message));
+  }, []);
+
+  if (error) return <p className="text-red-600">{error}</p>;
+
+  return (
+    <table className="border-collapse w-full text-sm">
+      <thead>
+        <tr className="bg-slate-100">
+          <th className="p-2">ts</th>
+          <th className="p-2">status</th>
+          <th className="p-2">root cause</th>
+          <th className="p-2">suggestion</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(r => (
+          <tr key={r.id} className="border-t">
+            <td className="p-2">{new Date(+r.ts / 1000).toLocaleString()}</td>
+            <td className="p-2">{r.status}</td>
+            <td className="p-2">{r.root_cause}</td>
+            <td className="p-2">{r.suggestion}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}

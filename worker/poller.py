@@ -17,11 +17,11 @@ SLEEP = 5    # seconds between polls
 
 def fetch_unseen(cur):
     cur.execute("""
-        SELECT * FROM aip_proxy_log
-        WHERE  aip_id IS NULL
-          AND  status >= 400
-        ORDER  BY timestamp
-        LIMIT  %s
+        SELECT * FROM proxy_log
+         WHERE status >= 400
+           AND id NOT IN (SELECT id FROM log_insight)
+         ORDER BY "timestamp"
+         LIMIT %s
     """, (BATCH,))
     return cur.fetchall()
 
@@ -66,23 +66,26 @@ def once(cur, conn):
             insight.get("suggestion", ""),
             insight.get("confidence", 0.5)
         ))
+
         if cur.rowcount:
             inserted += 1
 
-        cur.execute("""
-            UPDATE aip_proxy_log
-            SET    aip_id = %s
-            WHERE  id     = %s
-        """, (str(uuid.uuid4()), r["id"]))
-
     conn.commit()
+    time.sleep(0.2)          
     print(f"inserted {inserted} insight(s)")
     return inserted
 
 
 def main():
-    with psycopg2.connect(PG_DSN,
-            cursor_factory=psycopg2.extras.DictCursor) as conn:
+        while True:
+            try:
+                conn = psycopg2.connect(PG_DSN,
+                            cursor_factory=psycopg2.extras.DictCursor)
+                print("✅ connected to db", flush=True)
+                break
+            except psycopg2.OperationalError:
+                print("❗ db not ready, retrying in 2s…", flush=True)
+                time.sleep(2)
         cur = conn.cursor()
 
         # ---- create log_insight on first run ---------------------------------

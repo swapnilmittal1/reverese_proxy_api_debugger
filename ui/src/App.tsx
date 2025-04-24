@@ -36,6 +36,81 @@ const pollTimeOptions = [
   { value: 60000, label: "60 s" },
 ];
 
+// AIP Configuration
+const AIP_CONFIG = {
+  model: import.meta.env.VITE_PALANTIR_AIP_MODEL || "palantir-aip-v1",
+  apiKey: import.meta.env.VITE_PALANTIR_AIP_KEY,
+  endpoint: import.meta.env.VITE_PALANTIR_AIP_ENDPOINT,
+};
+
+// AIP client for analyzing API requests
+const analyzeRequest = async (request: {
+  method: string;
+  path: string;
+  status: number;
+  req_body?: string;
+  req_headers?: Record<string, string>;
+  res_body?: string;
+  res_headers?: Record<string, string>;
+}) => {
+  try {
+    const response = await fetch(AIP_CONFIG.endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${AIP_CONFIG.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: AIP_CONFIG.model,
+        messages: [
+          {
+            role: "system",
+            content: "You are an API debugging assistant. Analyze the request and response to identify issues and suggest improvements."
+          },
+          {
+            role: "user",
+            content: JSON.stringify({
+              method: request.method,
+              path: request.path,
+              status: request.status,
+              request: {
+                body: request.req_body,
+                headers: request.req_headers
+              },
+              response: {
+                body: request.res_body,
+                headers: request.res_headers
+              }
+            }, null, 2)
+          }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`AIP request failed: ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    // Parse the AIP response to extract root cause, suggestion, and confidence
+    const analysis = {
+      root_cause: result.choices[0]?.message?.content?.root_cause || "Unable to determine root cause",
+      suggestion: result.choices[0]?.message?.content?.suggestion || "No suggestion available",
+      confidence: result.choices[0]?.message?.content?.confidence || 0.5
+    };
+
+    return analysis;
+  } catch (error) {
+    console.error('AIP Analysis failed:', error);
+    return {
+      root_cause: "Analysis failed: " + (error as Error).message,
+      suggestion: "Please try again or contact support if the issue persists",
+      confidence: 0
+    };
+  }
+};
+
 export default function App() {
   const [data, setData] = useState<Insight[]>([]);
   const [pollTime, setPollTime] = useState(15000); // 15 seconds default
@@ -124,15 +199,36 @@ export default function App() {
 
   const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() });
 
-  const handleAnalysisClick = (id: number) => {
+  const handleAnalysisClick = async (id: number) => {
     if (!showAiAnalysis[id]) {
       setAnalyzing(prev => ({ ...prev, [id]: true }));
       setShowAiAnalysis(prev => ({ ...prev, [id]: false }));
-      // Simulate analysis with a delay
-      setTimeout(() => {
-        setAnalyzing(prev => ({ ...prev, [id]: false }));
+      
+      try {
+        const request = data.find(item => item.id === id);
+        if (!request) throw new Error("Request not found");
+
+        const analysis = await analyzeRequest(request);
+        
+        // Update the request data with AI analysis
+        setData(prev => prev.map(item => 
+          item.id === id 
+            ? { 
+                ...item, 
+                root_cause: analysis.root_cause,
+                suggestion: analysis.suggestion,
+                confidence: analysis.confidence
+              }
+            : item
+        ));
+
         setShowAiAnalysis(prev => ({ ...prev, [id]: true }));
-      }, 1500);
+      } catch (error) {
+        console.error('Analysis failed:', error);
+        setError(`Analysis failed: ${(error as Error).message}`);
+      } finally {
+        setAnalyzing(prev => ({ ...prev, [id]: false }));
+      }
     } else {
       setShowAiAnalysis(prev => ({ ...prev, [id]: false }));
     }
